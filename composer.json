@@ -1,0 +1,22 @@
+{
+    "name": "programmer/tilda-test",
+    "description": "Test tasks for Tilda interview",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "TildaTest\\": "src/",
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "programmer",
+            "email": "internetov.ru@gmail.com"
+        }
+    ],
+    "require": {}
+}
