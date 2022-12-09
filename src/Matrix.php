@@ -23,13 +23,13 @@ final class Matrix
         }
     }
 
-    /** @param array<T[]> $rows */
+    /** @param array<int[]|float[]> $rows */
     public static function fromRows(array $rows): self
     {
         return new self($rows);
     }
 
-    /** @param array<T> $vector */
+    /** @param array<int|float> $vector */
     public static function fromVector(array $vector, int $rowsNumber, int $colsNumber): self
     {
         $rows = array_chunk($vector, $colsNumber);
@@ -40,13 +40,11 @@ final class Matrix
         return new self($rows);
     }
 
-    /** @return array<T> */
     public function rowsSum(): array
     {
         return array_map(array_sum(...), $this->rows);
     }
 
-    /** @return array<T> */
     public function colsSum(): array
     {
         return $this->transpose()->rowsSum();
@@ -54,7 +52,13 @@ final class Matrix
 
     public function transpose(): self
     {
-        // array_map zip arrays if callback is null
-        return new self(array_map(null, ...$this->rows));
+        /**
+         * unfortunately it's too hard for psalm to infer type,
+         * so we need intermediate value and typehint here
+         *
+         * @var array<T[]> $transposed
+         */
+        $transposed = array_map(null, ...$this->rows); //array_map zip arrays if callback is null
+        return new self($transposed);
     }
 }
