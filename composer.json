@@ -18,5 +18,11 @@
             "email": "internetov.ru@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8.1"
+    },
+    "scripts": {
+        "test": "phpunit --testdox",
+        "psalm": "psalm --output-format=phpstorm"
+    }
 }
