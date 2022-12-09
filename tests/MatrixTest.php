@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 
-use App\Matrix;
+use App\Matrix\Domain\Matrix;
 use PHPUnit\Framework\TestCase;
 
 final class MatrixTest extends TestCase
@@ -82,5 +82,12 @@ final class MatrixTest extends TestCase
     {
         $this->expectExceptionMessage('Invalid vector length for given dimensions');
         Matrix::fromVector([1, 2, 3], 2, 3);
+    }
+
+    /** @test */
+    public function it_can_transpose_one_row_matrix(): void
+    {
+        $singleColumn = Matrix::fromRows([[1, 2]]);
+        $this->assertEquals([[1], [2]], $singleColumn->transpose()->rows);
     }
 }

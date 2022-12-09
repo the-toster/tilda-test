@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Matrix\Domain;
 
 /** @template T of int|float */
 final class Matrix
@@ -52,13 +52,16 @@ final class Matrix
 
     public function transpose(): self
     {
+        // array_map zip arrays if callback is null, but special case required for single row matrix
+        $callback = count($this->rows) === 1 ? fn ($x) => [$x] : null;
+
         /**
          * unfortunately it's too hard for psalm to infer type,
-         * so we need intermediate value and typehint here
+         * so we need intermediate value to typehint here
          *
          * @var array<T[]> $transposed
          */
-        $transposed = array_map(null, ...$this->rows); //array_map zip arrays if callback is null
+        $transposed = array_map($callback, ...$this->rows);
         return new self($transposed);
     }
 }
