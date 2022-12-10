@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Задача 3: фронт</title>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=335b21f8-3c50-4460-b823-6373175e5532&lang=ru_RU"
+            type="text/javascript"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+</head>
+<body>
+<header class="container mb-4">
+    <div>Ваш город:
+        <div data-id="city">не определен</div>
+    </div>
+    <div class="presentation">
+        <div data-id="phone">8-800-DIGITS</div>
+    </div>
+    <div>
+        <div>
+            Выбрать другой филиал:
+            <span data-toggle="selectCity" class="btn btn-outline-info">Москва</span>
+            <span data-toggle="selectCity" class="btn btn-outline-info">Санкт-Петербург</span>
+            <span data-toggle="selectCity" class="btn btn-outline-info">Калининград</span>
+            <span data-toggle="selectCity" class="btn btn-outline-info">Алматы</span>
+        </div>
+    </div>
+</header>
+<section class="container">
+    <h1>Задание 3: фронт</h1>
+    <p>
+        Вы работаете в компании, присутствующей в нескольких городах РФ. На сайте компании есть страница с контактной
+        информацией. Маркетолог поставил задачу и уехал, к его приезду задача должна быть реализована.
+    </p>
+    <p>
+        На страницу контактов заходят люди из разных городов, нужно чтобы они видели телефон из своего города. По
+        умолчанию, в HTML-страницы прописан телефон 8-800-DIGITS. Телефон размещен вверху и внизу страницы.
+    </p>
+    <p>Вот и все что рассказал маркетолог прежде чем уехать.</p>
+</section>
+<footer class="container mt-4">
+    <div data-id="phone">8-800-DIGITS</div>
+</footer>
+
+<script>
+
+    const phoneManager = new PhoneManager();
+
+    ymaps.ready(() =>
+        ymaps.geolocation
+            .get({provider: 'yandex', autoReverseGeocode: true})
+            .then(r => phoneManager.setByList(r.geoObjects.get(0).getLocalities()))
+    )
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const selectCity = (e) => {
+            const city = e.target.innerHTML;
+            phoneManager.setByList([city]);
+        }
+
+        document.querySelectorAll('[data-toggle="selectCity"]')
+            .forEach(el => el.addEventListener('click', selectCity))
+    });
+
+    function findNodesByText(text) {
+        const candidates = document.getElementsByTagName("*");
+        const r = [];
+        for (const el of candidates) {
+            if (el.childNodes.length !== 1) {
+                continue;
+            }
+
+            if (el.innerHTML === text) {
+                r.push(el)
+            }
+        }
+        return r;
+    }
+
+    function PhoneManager() {
+        const phoneNodes = findNodesByText('8-800-DIGITS');
+
+        const map = {
+            'Москва': '8-800-MOSCOW',
+            'Санкт-Петербург': '8-800-PITER',
+            'Калининград': '8-800-KENING',
+            'Алматы': '8-800-KZ'
+        }
+        this.getDefault = () => Object.values(map)[0];
+        this.findPhone = name => map[name] || null;
+
+        this.setByList = names => {
+            for (const name of names) {
+                const phone = this.findPhone(name);
+                if (phone) {
+                    this.updatePhone(phone)
+                    document.querySelector('[data-id="city"]').innerHTML = name;
+                    return;
+                }
+            }
+
+            this.updatePhone(this.getDefault())
+            document.querySelector('[data-id="city"]').innerHTML = 'не определен';
+        }
+
+        this.updatePhone = (val) => {
+            phoneNodes.forEach(el => el.innerText = val)
+        }
+    }
+</script>
+</body>
+</html>
