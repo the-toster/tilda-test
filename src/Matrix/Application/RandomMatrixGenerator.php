@@ -25,7 +25,6 @@ final class RandomMatrixGenerator
 
         $shuffled = $this->shuffler->shuffle($elements);
 
-        /** @var array<int> $firstElements */
         $firstElements = array_slice($shuffled, 0, $matrixSize);
 
         return Matrix::fromVector($firstElements, $rows, $cols);

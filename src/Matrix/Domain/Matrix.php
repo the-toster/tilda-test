@@ -53,15 +53,15 @@ final class Matrix
     public function transpose(): self
     {
         // array_map zip arrays if callback is null, but special case required for single row matrix
-        $callback = count($this->rows) === 1 ? fn ($x) => [$x] : null;
+        $callback = count($this->rows) === 1 ?
+            /**
+             * @param T $x
+             * @return T[] $x
+             */
+            fn($x) => [$x]
+            : null;
 
-        /**
-         * unfortunately it's too hard for psalm to infer type,
-         * so we need intermediate value to typehint here
-         *
-         * @var array<T[]> $transposed
-         */
-        $transposed = array_map($callback, ...$this->rows);
-        return new self($transposed);
+        /** @psalm-suppress InvalidArgument it messed with callback type, it seems to be better than broken callback typehint */
+        return new self(array_map($callback, ...$this->rows));
     }
 }
